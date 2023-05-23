@@ -10,9 +10,10 @@ int main(void){
     float porcentajeNinias140, porcentajeNinias140_170, porcentajeNinias170;
     float porcentajeNinios140, porcentajeNinios140_170, porcentajeNinios170;
     float altura, peso, promedioPesoNinios, imc, alturaEnMetros;
-    float arrayAlturaNinias[100], arrayIMC[100];
+    float arrayAlturaNinias[100], arrayIMC[100], arrayAlturas[100], arrayPesos[100];
+    int arrayEdades[100];
     int edad, genero;
-    char arrayNombres[100][50];
+    char arrayNombres[100][50], arrayNombresNinias[100][50];
     char *generoString;
     char nombre[50];
 
@@ -20,11 +21,10 @@ int main(void){
     int cantNiniasAltura140, cantNiniasAltura140_170, cantNiniasAltura170;
     int cantNiniosAltura140, cantNiniosAltura140_170, cantNiniosAltura170;
     int contPacientes, contNinios, contNinias;
-    int indiceArrayAlturaNinias = 0 ;
-    int indiceArrayNombres = 0;
-    int indiceArrayIMC = 0;
+    int indiceArrayAlturaNinias = 0, indiceArrayNombres = 0, indiceArrayIMC = 0, indiceArrayNombresNinias = 0;
+    int indiceArrayEdades = 0, indiceArrayAlturas = 0, indiceArrayPesos = 0;
     int valorCentinela, selector, cantDiariaPacientes;
-    int i, j, k;
+    int i, j, k, l, m, n;
 
     //Inicialización de varibales de soporte
     contPacientes = 0;
@@ -84,6 +84,18 @@ int main(void){
         strcpy(arrayNombres[indiceArrayNombres], nombre);
         indiceArrayNombres++; 
 
+        //Guardar las edades en un array
+        arrayEdades[indiceArrayEdades] = edad;
+        indiceArrayEdades++;
+
+        //Guardar alturas en un array
+        arrayAlturas[indiceArrayAlturas] = altura;
+        indiceArrayAlturas++;
+
+        //Guardar los pesos en un array
+        arrayPesos[indiceArrayPesos] = peso;
+        indiceArrayPesos++;
+
         //Hacer explicito el genero
         switch (genero)
         {
@@ -95,6 +107,9 @@ int main(void){
 
                 arrayAlturaNinias[indiceArrayAlturaNinias] = altura;
                 indiceArrayAlturaNinias++;
+
+                strcpy(arrayNombresNinias[indiceArrayNombresNinias], nombre);
+                indiceArrayNombresNinias++;
             }
 
             //cantidad de niñas con altura < 140
@@ -130,7 +145,6 @@ int main(void){
                 cantNiniosAltura170++;
 
             contNinios++;
-
             break;
         }
 
@@ -149,6 +163,13 @@ int main(void){
     }while(cantDiariaPacientes > 0);
     
     contPacientes = contNinias + contNinios;
+    promedioPesoNinios = promedioPesoNinios / ((float) contNinios);
+    porcentajeNinias140 = 100 * cantNiniasAltura140 / contPacientes;
+    porcentajeNinios140 = 100 * cantNiniosAltura140 / contPacientes;
+    porcentajeNinias140_170 = 100 * cantNiniasAltura140_170 / contPacientes;
+    porcentajeNinios140_170 = 100 * cantNiniosAltura140_170 / contPacientes;
+    porcentajeNinias170 = 100 * cantNiniasAltura170 / contPacientes;
+    porcentajeNinios170 = 100 * cantNiniosAltura170 / contPacientes;
 
     do{
 
@@ -163,20 +184,14 @@ int main(void){
             printf("\t---PORCENTAJES DE NINIOS Y NINIAS SEGUN SU ALTURA---\n");
 
             //Imprimir porcentaje niños y niñas altura < 140
-            porcentajeNinias140 = 100 * cantNiniasAltura140 / contPacientes;
-            porcentajeNinios140 = 100 * cantNiniosAltura140 / contPacientes;
             printf("El porcentaje de ninias de altura < 140cm es: %f%\n", porcentajeNinias140);
             printf("El porcentaje de ninios de altura < 140cm es: %f%\n\n", porcentajeNinios140);
 
             //Imprimir porcentaje niños y niñas 140 <= altura <= 170
-            porcentajeNinias140_170 = 100 * cantNiniasAltura140_170 / contPacientes;
-            porcentajeNinios140_170 = 100 * cantNiniosAltura140_170 / contPacientes;
             printf("El porcentaje de ninias de 140 <= altura <= 170cm es: %f%\n", porcentajeNinias140_170);
             printf("El porcentaje de ninios de 140 <= altura <= 170cm es: %f%\n\n", porcentajeNinios140_170);
 
             //Imprimir porcentaje niños y niñas altura < 140
-            porcentajeNinias170 = 100 * cantNiniasAltura170 / contPacientes;
-            porcentajeNinios170 = 100 * cantNiniosAltura170 / contPacientes;
             printf("El porcentaje de ninias de altura > 170cm es: %f%\n", porcentajeNinias170);
             printf("El porcentaje de ninios de altura > 170cm es: %f%\n", porcentajeNinios170);
             system("pause");
@@ -187,20 +202,30 @@ int main(void){
             printf("\t---PESO PROMEDIO DE NINIOS---\n");
             
             //Imprimir promedio del peso de los niños
-            promedioPesoNinios = promedioPesoNinios / ((float) contNinios);
             printf("Promedio de peso de ninios: %0.2f\n", promedioPesoNinios);
             system("pause");
             system("cls");
 
             break;
         case 3:
-            printf("\t---ALTURA DE LAS NINIAS MENORES 10 ANIOS CON 35 <= ALTURA <= 50---\n");
+            printf("\t---ALTURA DE LAS NINIAS MENORES 10 ANIOS CON 35 <= PESO <= 50---\n");
 
             //Imprimir el array de las niñas menores de 10 años con 35 <= peso <= 50 kg     
+            printf("------\n");
+            printf("NOMBRE\n");
+            printf("------\n");
+            for(i = 0; i < indiceArrayNombresNinias; i++){
+
+                printf("| %10s |", arrayNombresNinias[i]);
+            }
+            printf("\n------\n");
+            printf("ALTURA\n");
+            printf("------\n");
             for(i = 0; i < indiceArrayAlturaNinias; i++){
 
-                printf("Estas son las alturas de las ninias: %0.2f\n", arrayAlturaNinias[i]);
+                printf("|       %0.2f|", arrayAlturaNinias[i]);
             }
+            printf("\n");
             system("pause");
             system("cls");
     
@@ -208,21 +233,41 @@ int main(void){
         case 4:
 
             printf("\t---MOSTRAR DATOS DE LOS PACIENTES---\n");
-            //Imprimir el IMC con los nombres de los pacientes
-            
-            printf("---\n");
+            //Imprimir el IMC con los nombres de los pacientes 
+            printf("------\n");
             printf("NOMBRE\n");
-            printf("---\n");
+            printf("------\n");
             for(j = 0; j < indiceArrayNombres; j++){
 
                 printf("| %10s |", arrayNombres[j]);
             }
-            printf("\n---\n");
-            printf("IMC\n");
-            printf("---\n");
-            for(k = 0; k < indiceArrayIMC; k++){
+            printf("\n------\n");
+            printf("EDAD\n");
+            printf("------\n");
+            for(k = 0; k < indiceArrayEdades; k++){
 
-                printf("|      %0.2f |", arrayIMC[k]);
+                printf("|        %3d |", arrayEdades[k]);
+            }
+            printf("\n------\n");
+            printf("ALTURA\n");
+            printf("------\n");
+            for(l = 0; l < indiceArrayAlturas; l++){
+
+                printf("|     %0.2f |", arrayAlturas[l]);
+            }
+            printf("\n------\n");
+            printf("PESO\n");
+            printf("------\n");
+            for(m = 0; m < indiceArrayPesos; m++){
+
+                printf("|      %0.2f |", arrayPesos[m]);
+            }
+            printf("\n------\n");
+            printf("IMC\n");
+            printf("------\n");
+            for(n = 0; n < indiceArrayIMC; n++){
+
+                printf("|      %0.2f |", arrayIMC[n]);
             }
             printf("\n");
             system("pause");
@@ -231,13 +276,18 @@ int main(void){
             break;
         case 5:
 
-            printf("\t---SALIR---\n");
+            printf("\t---SALIENDO---\n");
+            break;
+        default:
+            printf("\t---NO EXISTE ESTA OPCION---\n");
+            system("pause");
+            system("cls");
             break;
         }
+
     
     }while(selector != 5);
 
-    system("pause");
     return 0; 
 }
 
