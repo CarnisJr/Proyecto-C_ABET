@@ -24,7 +24,7 @@ int main(void){
     int indiceArrayAlturaNinias = 0, indiceArrayNombres = 0, indiceArrayIMC = 0, indiceArrayNombresNinias = 0;
     int indiceArrayEdades = 0, indiceArrayAlturas = 0, indiceArrayPesos = 0;
     int valorCentinela, selector, cantDiariaPacientes;
-    int i, j, k, l, m, n;
+    int i, j;
 
     //Inicialización de varibales de soporte
     contPacientes = 0;
@@ -47,6 +47,7 @@ int main(void){
 
         do{
 
+// Arreglar esto
             printf("\t---INGRESO DE DATOS---\n");
             printf("Nombre del paciente: ");
             scanf("%s", &nombre);
@@ -96,7 +97,7 @@ int main(void){
         arrayPesos[indiceArrayPesos] = peso;
         indiceArrayPesos++;
 
-        //Hacer explicito el genero
+        //Hacer el genero un string
         switch (genero)
         {
         case 1:
@@ -163,7 +164,6 @@ int main(void){
     }while(cantDiariaPacientes > 0);
     
     contPacientes = contNinias + contNinios;
-    promedioPesoNinios = promedioPesoNinios / ((float) contNinios);
     porcentajeNinias140 = 100 * cantNiniasAltura140 / contPacientes;
     porcentajeNinios140 = 100 * cantNiniosAltura140 / contPacientes;
     porcentajeNinias140_170 = 100 * cantNiniasAltura140_170 / contPacientes;
@@ -171,6 +171,10 @@ int main(void){
     porcentajeNinias170 = 100 * cantNiniasAltura170 / contPacientes;
     porcentajeNinios170 = 100 * cantNiniosAltura170 / contPacientes;
 
+    if(contNinios > 0)
+        promedioPesoNinios = promedioPesoNinios / ((float) contNinios);
+    else
+        promedioPesoNinios = 0;
     do{
 
         printf("\t---MENU---\n");
@@ -200,7 +204,6 @@ int main(void){
             break;
         case 2:
             printf("\t---PESO PROMEDIO DE NINIOS---\n");
-            
             //Imprimir promedio del peso de los niños
             printf("Promedio de peso de ninios: %0.2f\n", promedioPesoNinios);
             system("pause");
@@ -211,20 +214,16 @@ int main(void){
             printf("\t---ALTURA DE LAS NINIAS MENORES 10 ANIOS CON 35 <= PESO <= 50---\n");
 
             //Imprimir el array de las niñas menores de 10 años con 35 <= peso <= 50 kg     
-            printf("------\n");
-            printf("NOMBRE\n");
-            printf("------\n");
+            printf("+------------+-------------+\n");
+            printf("|     NOMBRE |      ALTURA |\n");
+            printf("+------------+-------------+\n");
+                
             for(i = 0; i < indiceArrayNombresNinias; i++){
 
-                printf("| %10s |", arrayNombresNinias[i]);
+                printf("| %10s |      %0.2f | \n", arrayNombresNinias[i], arrayAlturaNinias[i]);
+                printf("+------------+-------------+\n");
             }
-            printf("\n------\n");
-            printf("ALTURA\n");
-            printf("------\n");
-            for(i = 0; i < indiceArrayAlturaNinias; i++){
 
-                printf("|       %0.2f|", arrayAlturaNinias[i]);
-            }
             printf("\n");
             system("pause");
             system("cls");
@@ -234,41 +233,15 @@ int main(void){
 
             printf("\t---MOSTRAR DATOS DE LOS PACIENTES---\n");
             //Imprimir el IMC con los nombres de los pacientes 
-            printf("------\n");
-            printf("NOMBRE\n");
-            printf("------\n");
+            printf("+------------+-------------+-------------+------------+------------+\n");
+            printf("|     NOMBRE |        EDAD |      ALTURA |       PESO |        IMC |\n");
+            printf("+------------+-------------+-------------+------------+------------+\n");
             for(j = 0; j < indiceArrayNombres; j++){
 
-                printf("| %10s |", arrayNombres[j]);
+                printf("| %10s |         %3d |      %0.2f |      %0.2f |       %0.2f|\n", arrayNombres[j], arrayEdades[j], arrayAlturas[j], arrayPesos[j], arrayIMC[j]);
+                printf("+------------+-------------+-------------+------------+------------+\n");
             }
-            printf("\n------\n");
-            printf("EDAD\n");
-            printf("------\n");
-            for(k = 0; k < indiceArrayEdades; k++){
-
-                printf("|        %3d |", arrayEdades[k]);
-            }
-            printf("\n------\n");
-            printf("ALTURA\n");
-            printf("------\n");
-            for(l = 0; l < indiceArrayAlturas; l++){
-
-                printf("|     %0.2f |", arrayAlturas[l]);
-            }
-            printf("\n------\n");
-            printf("PESO\n");
-            printf("------\n");
-            for(m = 0; m < indiceArrayPesos; m++){
-
-                printf("|      %0.2f |", arrayPesos[m]);
-            }
-            printf("\n------\n");
-            printf("IMC\n");
-            printf("------\n");
-            for(n = 0; n < indiceArrayIMC; n++){
-
-                printf("|      %0.2f |", arrayIMC[n]);
-            }
+            
             printf("\n");
             system("pause");
             system("cls");
@@ -287,7 +260,7 @@ int main(void){
 
     
     }while(selector != 5);
-
+    
     return 0; 
 }
 
