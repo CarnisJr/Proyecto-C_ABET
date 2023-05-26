@@ -17,13 +17,16 @@ int main(void){
     char *generoString;
     char nombre[50];
 
+    //Variables para la clasificación de desnutrición por Gonzales
+    float pesoParaEdadPercentil50, porcentajeDesnutricion; 
+
     //Variables de soporte
     int cantNiniasAltura140, cantNiniasAltura140_170, cantNiniasAltura170;
     int cantNiniosAltura140, cantNiniosAltura140_170, cantNiniosAltura170;
     int contPacientes, contNinios, contNinias;
     int indiceArrayAlturaNinias = 0, indiceArrayNombres = 0, indiceArrayIMC = 0, indiceArrayNombresNinias = 0;
     int indiceArrayEdades = 0, indiceArrayAlturas = 0, indiceArrayPesos = 0;
-    int valorCentinela, selector, cantDiariaPacientes;
+    int valorCentinela, selectorMenu, selectorSubMenu, cantDiariaPacientes;
     int i, j;
 
     //Inicialización de varibales de soporte
@@ -179,10 +182,10 @@ int main(void){
 
         printf("\t---MENU---\n");
         printf("1. Procentajes segun altura\n2. Promedio pesos ninios\n3. Altura de ninias\n4. IMC de los pacientes\n5. Salir\n");
-        scanf("%d", &selector);
+        scanf("%d", &selectorMenu);
         system("cls");
 
-        switch (selector)
+        switch (selectorMenu)
         {
         case 1:
             printf("\t---PORCENTAJES DE NINIOS Y NINIAS SEGUN SU ALTURA---\n");
@@ -241,7 +244,47 @@ int main(void){
                 printf("| %10s |         %3d |      %0.2f |      %0.2f |       %0.2f|\n", arrayNombres[j], arrayEdades[j], arrayAlturas[j], arrayPesos[j], arrayIMC[j]);
                 printf("+------------+-------------+-------------+------------+------------+\n");
             }
-            
+
+            //Imprimir submenu
+            do{
+
+                printf("\n\t---CALCULO DE DATOS IMPORTANTES PARA LA DETERMINACION DE DATOS---\n\n");
+                printf("1. Clasificación de desnutricion\n2. Sobrepeso y obsidad por IMC\n3. Salir\n");
+                scanf("%d", &selectorSubMenu);
+
+                switch (selectorSubMenu)
+                {
+                case 1:
+                    printf("\t---CLASIFICACION DE DESNUTRICION POR GOMEZ---\n");
+                    printf("Ingrese el peso del paciente: ");
+                    scanf("%f", &peso);
+                    printf("Ingrese el peso ideal de acuerdo a la edad del paciente: ");
+                    scanf("%f", &pesoParaEdadPercentil50);
+
+                    porcentajeDesnutricion = 100 - (100 * peso / pesoParaEdadPercentil50);
+
+                    printf("%f", porcentajeDesnutricion);
+
+                    break;
+                case 2:
+                    printf("\t---DIAGNOSTICO DE OBESIDAD Y SOBREPESO---\n");
+
+                    
+                    break;
+                case 3:
+                    printf("\t---SALIENDO---\n");
+                    break;
+                default:
+
+                    printf("\t---NO EXISTE ESTA OPCION---\n");
+                    system("pause");
+                    system("cls");
+                    break;
+                }                
+
+            }while(selectorSubMenu != 3);
+
+
             printf("\n");
             system("pause");
             system("cls");
@@ -252,6 +295,7 @@ int main(void){
             printf("\t---SALIENDO---\n");
             break;
         default:
+
             printf("\t---NO EXISTE ESTA OPCION---\n");
             system("pause");
             system("cls");
@@ -259,7 +303,7 @@ int main(void){
         }
 
     
-    }while(selector != 5);
+    }while(selectorMenu != 5);
     
     return 0; 
 }
