@@ -2,15 +2,14 @@
 #include<stdlib.h>
 #include<ctype.h>
 #include<string.h>
+#include "funciones.h"
 
 
 int main(void){
-
+    
     //variables principales
-    float porcentajeNinias140, porcentajeNinias140_170, porcentajeNinias170;
-    float porcentajeNinios140, porcentajeNinios140_170, porcentajeNinios170;
-    float altura, peso, promedioPesoNinios, imc, alturaEnMetros;
-    float arrayAlturaNinias[100], arrayIMC[100], arrayAlturas[100], arrayPesos[100];
+    float altura, peso, promedioPesoNinios, promedioPesoNinias, imc, alturaEnMetros;
+    float arrayAlturaNinias[100], arrayIMC[100], arrayAlturas[100], arrayPesos[100], arrayDesnutricion[100];
     int arrayEdades[100];
     int edad, genero;
     char arrayNombres[100][50], arrayNombresNinias[100][50];
@@ -25,8 +24,8 @@ int main(void){
     int cantNiniosAltura140, cantNiniosAltura140_170, cantNiniosAltura170;
     int contPacientes, contNinios, contNinias;
     int indiceArrayAlturaNinias = 0, indiceArrayNombres = 0, indiceArrayIMC = 0, indiceArrayNombresNinias = 0;
-    int indiceArrayEdades = 0, indiceArrayAlturas = 0, indiceArrayPesos = 0;
-    int valorCentinela, selectorMenu, selectorSubMenu, cantDiariaPacientes;
+    int indiceArrayEdades = 0, indiceArrayAlturas = 0, indiceArrayPesos = 0, indiceArrayDesnutricion = 0;
+    int selectorMenu, cantDiariaPacientes, valorCentinela;
     int i, j;
 
     //Inicialización de varibales de soporte
@@ -42,48 +41,31 @@ int main(void){
     cantNiniosAltura140_170 = 0;
     cantNiniosAltura170 = 0;
 
-    printf("Ingrese la cantidad de pacientes:\n ");
-    scanf("%d", &cantDiariaPacientes);
+    /*Log in del usuario
+      Usuario: ADMIN
+      Contraseña: admin123*/
+    logIn();
+
+    cantDiariaPacientes = verificacionCantPacientes();
     system("cls");
 
+    //Obtencion datos de los pacientes y operaciones con los mismos
     do{
 
         do{
 
-// Arreglar esto
-            printf("\t---INGRESO DE DATOS---\n");
+            printf("\t---INGRESO DE DATOS---\n\n");
             printf("Nombre del paciente: ");
             scanf("%s", &nombre);
-            printf("1. Femenino\n2. Masculino\n");
-            scanf("%d", &genero);
-            printf("Edad del paciente: ");
-            scanf("%d", &edad);
-            printf("Peso del paciente: ");
-            scanf("%f", &peso);
-            printf("Altura del paciente: ");
-            scanf("%f", &altura);
+            genero = verificacionGenero();
+            edad = verificacionEdad();
+            altura = verificacionAltura();
+            peso = verificacionPeso();
+            valorCentinela = verificarDatos();
             system("cls");
 
-            //Mensajes de error a la entrada de datos
-            if(genero < 0 || genero > 2)
-                printf("\t---ERROR DATO DE GENERO INCORRECTO--\n");
-            if(edad < 0)
-                printf("\t---ERROR DATO DE EDAD INCORRECTO--\n");
-            if(peso < 0)
-                printf("\t---ERROR DATO DE PESO INCORRECTO--\n");
-            if(altura < 0)
-                printf("\t---ERROR DATO DE ALTURA INCORRECTO--\n");
-            system("pause");
-            system("cls");
-
-        }while(genero < 0 || genero > 2 || edad < 0 || peso < 0 || altura < 0);
+        }while(genero < 0 || genero > 2 || edad < 0 || peso < 0 || altura < 0 || valorCentinela != 1);
         
-        //Calcular el IMC
-        alturaEnMetros = altura / (float) 100;
-        imc = peso / (alturaEnMetros * alturaEnMetros);
-        arrayIMC[indiceArrayIMC] = imc;
-        indiceArrayIMC++;
-
         //Guardar los nombres de los pacientes en un array
         strcpy(arrayNombres[indiceArrayNombres], nombre);
         indiceArrayNombres++; 
@@ -105,6 +87,8 @@ int main(void){
         {
         case 1:
             generoString = "Femenino";
+
+            promedioPesoNinias += peso;
 
             //Array para guardar la altura de las niñas menores de 10 años y con 35 <= peso <= 50 kg
             if(edad < 10 && peso >= 35 && peso <= 50){
@@ -153,13 +137,25 @@ int main(void){
         }
 
         //Ficha médica
-        printf("\t---FICHA MEDICA---\n");
-        printf("Nombre: %s\n", nombre);
-        printf("Genero: %s\n", generoString);
-        printf("Edad: %d\n", edad);
-        printf("Peso: %0.2f\n", peso);
-        printf("Altura: %0.2f\n", altura);
-        printf("IMC: %0.2f\n", imc);
+        fichaMedica(nombre, generoString, edad, peso, altura);
+        
+        //Calcular el IMC
+        imc = calcularIMC(peso, altura);
+        arrayIMC[indiceArrayIMC] = imc;
+        indiceArrayIMC++;
+
+        //Calcular desnutricion por Gonzales
+        printf("NOTA: Revisar la tabla \"peso para edad\" en la carpeta anexos.\n");
+        porcentajeDesnutricion = calcularDesnutricion(peso);
+        arrayDesnutricion[indiceArrayDesnutricion] = porcentajeDesnutricion;
+        indiceArrayDesnutricion++; 
+
+        printf("\nDIAGNOSTICO:\n\n");
+        printf("1. El IMC del paciente es: %0.2f\n", imc);
+        printf("   NOTA: Revisar la tabla \"IMC para edad\" en la carpeta anexos, para determinar si sufre de obesidad o sobrepeso.\n\n");
+
+        printf("2. El porcentaje de desnutricion es: %0.2f%c\n", porcentajeDesnutricion, '%');
+        determinarGradoDesnutricion(porcentajeDesnutricion);
         system("pause");
         system("cls");
 
@@ -167,54 +163,39 @@ int main(void){
     }while(cantDiariaPacientes > 0);
     
     contPacientes = contNinias + contNinios;
-    porcentajeNinias140 = 100 * cantNiniasAltura140 / contPacientes;
-    porcentajeNinios140 = 100 * cantNiniosAltura140 / contPacientes;
-    porcentajeNinias140_170 = 100 * cantNiniasAltura140_170 / contPacientes;
-    porcentajeNinios140_170 = 100 * cantNiniosAltura140_170 / contPacientes;
-    porcentajeNinias170 = 100 * cantNiniasAltura170 / contPacientes;
-    porcentajeNinios170 = 100 * cantNiniosAltura170 / contPacientes;
 
-    if(contNinios > 0)
-        promedioPesoNinios = promedioPesoNinios / ((float) contNinios);
-    else
-        promedioPesoNinios = 0;
+    promedioPesoNinios = promedioPeso(promedioPesoNinios, contNinios);
+    promedioPesoNinias = promedioPeso(promedioPesoNinias, contNinias);
+
+    //Menú para la visualización de los datos obtenidos
     do{
-
-        printf("\t---MENU---\n");
-        printf("1. Procentajes segun altura\n2. Promedio pesos ninios\n3. Altura de ninias\n4. IMC de los pacientes\n5. Salir\n");
+        printf("\t---MENU---\n\n");
+        printf("1. Procentajes segun altura\n2. Promedio pesos ninios\n3. Altura de ninias\n4. Datos de los pacientes\n5. Salir\n");
         scanf("%d", &selectorMenu);
         system("cls");
 
         switch (selectorMenu)
         {
         case 1:
-            printf("\t---PORCENTAJES DE NINIOS Y NINIAS SEGUN SU ALTURA---\n");
+            printf("\t---PORCENTAJES DE NINIOS Y NINIAS SEGUN SU ALTURA---\n\n");
 
-            //Imprimir porcentaje niños y niñas altura < 140
-            printf("El porcentaje de ninias de altura < 140cm es: %f%\n", porcentajeNinias140);
-            printf("El porcentaje de ninios de altura < 140cm es: %f%\n\n", porcentajeNinios140);
-
-            //Imprimir porcentaje niños y niñas 140 <= altura <= 170
-            printf("El porcentaje de ninias de 140 <= altura <= 170cm es: %f%\n", porcentajeNinias140_170);
-            printf("El porcentaje de ninios de 140 <= altura <= 170cm es: %f%\n\n", porcentajeNinios140_170);
-
-            //Imprimir porcentaje niños y niñas altura < 140
-            printf("El porcentaje de ninias de altura > 170cm es: %f%\n", porcentajeNinias170);
-            printf("El porcentaje de ninios de altura > 170cm es: %f%\n", porcentajeNinios170);
+            porcentajesSegunAltura(contPacientes, cantNiniasAltura140, cantNiniosAltura140, cantNiniasAltura140_170, cantNiniosAltura140_170, cantNiniasAltura170, cantNiniosAltura170);
+            printf("\n");
             system("pause");
             system("cls");
 
             break;
         case 2:
-            printf("\t---PESO PROMEDIO DE NINIOS---\n");
+            printf("\t---PESO PROMEDIO NINIOS Y NINIAS---\n\n");
             //Imprimir promedio del peso de los niños
-            printf("Promedio de peso de ninios: %0.2f\n", promedioPesoNinios);
+            printf("Promedio de peso de ninios: %0.2fkg\n\n", promedioPesoNinios);
+            printf("Promedio de peso de ninias: %0.2fkg\n\n", promedioPesoNinias);
             system("pause");
             system("cls");
 
             break;
         case 3:
-            printf("\t---ALTURA DE LAS NINIAS MENORES 10 ANIOS CON 35 <= PESO <= 50---\n");
+            printf("\t---ALTURA DE LAS NINIAS MENORES 10 ANIOS CON 35 <= PESO <= 50---\n\n");
 
             //Imprimir el array de las niñas menores de 10 años con 35 <= peso <= 50 kg     
             printf("+------------+-------------+\n");
@@ -223,67 +204,26 @@ int main(void){
                 
             for(i = 0; i < indiceArrayNombresNinias; i++){
 
-                printf("| %10s |      %0.2f | \n", arrayNombresNinias[i], arrayAlturaNinias[i]);
+                printf("| %10s |    %6.2fcm | \n", arrayNombresNinias[i], arrayAlturaNinias[i]);
                 printf("+------------+-------------+\n");
             }
 
-            printf("\n");
+            printf("\nLas ninias en esta tabla padencen de obesidad o sobrepeso, necesitan tartamiento urgente\n\n");
             system("pause");
             system("cls");
-    
+
             break;
         case 4:
-
-            printf("\t---MOSTRAR DATOS DE LOS PACIENTES---\n");
-            //Imprimir el IMC con los nombres de los pacientes 
-            printf("+------------+-------------+-------------+------------+------------+\n");
-            printf("|     NOMBRE |        EDAD |      ALTURA |       PESO |        IMC |\n");
-            printf("+------------+-------------+-------------+------------+------------+\n");
-            for(j = 0; j < indiceArrayNombres; j++){
-
-                printf("| %10s |         %3d |      %0.2f |      %0.2f |       %0.2f|\n", arrayNombres[j], arrayEdades[j], arrayAlturas[j], arrayPesos[j], arrayIMC[j]);
-                printf("+------------+-------------+-------------+------------+------------+\n");
+            
+            printf("\t---MOSTRAR DATOS DE LOS PACIENTES---\n\n");
+            
+            printf("+------------+-------------+-------------+------------+------------+-------------------------+\n");
+            printf("|     NOMBRE |        EDAD |      ALTURA |       PESO |        IMC | PORCENTAJE DESNUTRICION |\n");
+            printf("+------------+-------------+-------------+------------+------------+-------------------------+\n");
+            for(j = 0; j < contPacientes; j++){
+                printf("| %10s |         %3d |    %6.2fcm |    %5.2fkg |       %5.2f|                  %6.2f%c|\n", arrayNombres[j], arrayEdades[j], arrayAlturas[j], arrayPesos[j], arrayIMC[j], arrayDesnutricion[j], '%');
+                printf("+------------+-------------+-------------+------------+------------+-------------------------+\n");
             }
-
-            //Imprimir submenu
-            do{
-
-                printf("\n\t---CALCULO DE DATOS IMPORTANTES PARA LA DETERMINACION DE DATOS---\n\n");
-                printf("1. Clasificación de desnutricion\n2. Sobrepeso y obsidad por IMC\n3. Salir\n");
-                scanf("%d", &selectorSubMenu);
-
-                switch (selectorSubMenu)
-                {
-                case 1:
-                    printf("\t---CLASIFICACION DE DESNUTRICION POR GOMEZ---\n");
-                    printf("Ingrese el peso del paciente: ");
-                    scanf("%f", &peso);
-                    printf("Ingrese el peso ideal de acuerdo a la edad del paciente: ");
-                    scanf("%f", &pesoParaEdadPercentil50);
-
-                    porcentajeDesnutricion = 100 - (100 * peso / pesoParaEdadPercentil50);
-
-                    printf("%f", porcentajeDesnutricion);
-
-                    break;
-                case 2:
-                    printf("\t---DIAGNOSTICO DE OBESIDAD Y SOBREPESO---\n");
-
-                    
-                    break;
-                case 3:
-                    printf("\t---SALIENDO---\n");
-                    break;
-                default:
-
-                    printf("\t---NO EXISTE ESTA OPCION---\n");
-                    system("pause");
-                    system("cls");
-                    break;
-                }                
-
-            }while(selectorSubMenu != 3);
-
 
             printf("\n");
             system("pause");
@@ -300,12 +240,9 @@ int main(void){
             system("pause");
             system("cls");
             break;
-        }
+    }    
 
-    
     }while(selectorMenu != 5);
     
     return 0; 
 }
-
-
