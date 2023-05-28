@@ -170,7 +170,7 @@ int main(void){
     //Menú para la visualización de los datos obtenidos
     do{
         printf("\t---MENU---\n\n");
-        printf("1. Procentajes segun altura\n2. Promedio pesos ninios\n3. Altura de ninias\n4. Datos de los pacientes\n5. Salir\n");
+        printf("1. Procentajes segun altura\n2. Promedio pesos\n3. Altura de ninias\n4. Datos de los pacientes\n5. Salir\n");
         scanf("%d", &selectorMenu);
         system("cls");
 
